@@ -1,24 +1,14 @@
-var http = require("http");
-var url = require("url");
-var fs = require("fs");
+const express = require("express");
+const app = express();
 
-http
-  .createServer(function (req, res) {
-    var q = url.parse(req.url, true);
-    var filename = "./pages/";
-    if (q.pathname == "/") filename += "index.html";
-    else if (q.pathname == "/about") filename += "about.html";
-    else if (q.pathname == "/contact-me") filename += "contact-me.html";
-    else filename += "404.html";
-    fs.readFile(filename, function (err, data) {
-      if (err) {
-        res.writeHead(404, { "Content-Type": "text/html" });
-        res.write();
-        return res.end("404 Not Found");
-      }
-      res.writeHead(200, { "Content-Type": "text/html" });
-      res.write(data);
-      return res.end();
-    });
-  })
-  .listen(8080);
+app.get("/", (req, res) => res.sendFile(__dirname + "/pages/index.html"));
+app.get("/about", (req, res) => res.sendFile(__dirname + "/pages/about.html"));
+app.get("/contact-me", (req, res) =>
+  res.sendFile(__dirname + "/pages/contact-me.html")
+);
+app.all("*", (req, res) => res.sendFile(__dirname + "/pages/404.html"));
+
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`My first Express app - listening on port ${PORT}!`);
+});
